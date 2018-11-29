@@ -1,7 +1,8 @@
 #include <iostream>
 #include <string>
 
-
+//next 2 functions we need for byte substitution
+//
 int string_to_int(std::string str, int index){
 if(str[index]=='a') return 10;
 else if(str[index]=='b') return 11;
@@ -12,12 +13,49 @@ else if(str[index]=='f') return 15;
 else return str[index]-48;
 }
 
+void substitute_bytes(std::string input_state[4][4]){
+
+ std::string s_box[16][16]={
+              {"63","7c","77","7b","f2","6b","6f","c5","30","01","67","2b","fe","d7","ab","76"},
+              {"ca","82","c9","7d","fa","59","47","f0","ad","d4","a2","af","9c","a4","72","c0"},
+              {"b7","fd","93","26","36","3f","f7","cc","34","a5","e5","f1","71","d8","31","15"},
+              {"04","c7","23","c3","18","96","05","9a","07","12","80","e2","eb","27","b2","75"},
+              {"09","83","2c","1a","1b","6e","5a","a0","52","3b","d6","b3","29","e3","2f","84"},
+              {"53","d1","00","ed","20","fc","b1","5b","6a","cb","be","39","4a","4c","58","cf"},
+              {"d0","ef","aa","fb","43","4d","33","85","45","f9","02","7f","50","3c","9f","a8"},
+              {"51","a3","40","8f","92","9d","38","f5","bc","b6","da","21","10","ff","f3","d2"},
+              {"cd","0c","13","ec","5f","97","44","17","c4","a7","7e","3d","64","5d","19","73"},
+              {"60","81","4f","dc","22","2a","90","88","46","ee","b8","14","de","5e","0b","db"},
+              {"e0","32","3a","0a","49","06","24","5c","c2","d3","ac","62","91","95","e4","79"},
+              {"e7","c8","37","6d","8d","d5","4e","a9","6c","56","f4","ea","65","7a","ae","08"},
+              {"ba","78","25","2e","1c","a6","b4","c6","e8","dd","74","1f","4b","bd","8b","8a"},
+              {"70","3e","b5","66","48","03","f6","0e","61","35","57","b9","86","c1","1d","9e"},
+              {"e1","f8","98","11","69","d9","8e","94","9b","1e","87","e9","ce","55","28","df"},
+              {"8c","a1","89","0d","bf","e6","42","68","41","99","2d","0f","b0","54","bb","16"}
+      };
+
+
+
+for(int i=0;i<4;i++)
+                for(int j=0;j<4;j++){
+                   input_state[i][j]=s_box[string_to_int(input_state[i][j],0)][string_to_int(input_state[i][j],1)];
+
+              }
+
+
+}
+
+
+
+
+//next 2 functions we need for shifting rows
+
  void shift_array(std::string array[],int n){
 	 std::string temp1=array[0];
 	 std::string temp2=array[1];
          std::string temp3=array[2];
 
-	 if(n==1){  // 1 2 3 4  2 3 4 1
+	 if(n==1){ 
        array[0]=array[1];	
        array[1]=array[2];	
        array[2]=array[3];	
@@ -28,7 +66,7 @@ else return str[index]-48;
        array[2]=temp1;
        array[3]=temp2;
 	 
-	 }else if (n==3){// 1 2 3 4   4 1 2 3
+	 }else if (n==3){
        array[0]=array[3];
        array[1]=temp1;
        array[2]=temp2;
@@ -39,10 +77,14 @@ else return str[index]-48;
  
  }
 
+void shift_rows(std::string input_state[4][4]){
+  shift_array(input_state[1],1);
+  shift_array(input_state[2],2);
+  shift_array(input_state[3],3);
 
+}
 
-
-
+//next functions we need for mixing columns
 
 std::string to_binary(int val){
 switch(val){
@@ -76,7 +118,6 @@ str[7]='0';
 return str;
 
 }
-
 
 std::string XOR(std::string s1, std::string s2){
 for(int i=0;i<8;i++){
@@ -129,9 +170,7 @@ for(int i=0;i<4;i++){
 	temp[i]=mul_3(array2[i]);
 	}
 }
-/*for(int i=0;i<4;i++){
-	std::cout<<temp[i]<<std::endl;
-}*/
+
 
 return XOR_4(temp[0],temp[1],temp[2],temp[3]);
 
@@ -181,7 +220,7 @@ int m2[4]= {1,2,3,1};
 int m3[4]= {1,1,2,3};
 int m4[4]= {3,1,1,2};
    
-std::string column[4];//;={"d4","bf","5d","30"};
+std::string column[4];
 
 
 for(int i=0;i<4;i++){
@@ -197,64 +236,6 @@ input_state[3][n]=hex(multiple_arrays(m4,column));
 
 }
 
-
-
-
-
-
-
-void substitute_bytes(std::string input_state[4][4], std::string s_box[16][16]){
- for(int i=0;i<4;i++)
-                for(int j=0;j<4;j++){
-                   input_state[i][j]=s_box[string_to_int(input_state[i][j],0)][string_to_int(input_state[i][j],1)];
-
-              }
-
-
-}
-void substitute_byte(std::string input_state[4]){
-
-
-     std::string s_box[16][16]={
-              {"63","7c","77","7b","f2","6b","6f","c5","30","01","67","2b","fe","d7","ab","76"},
-              {"ca","82","c9","7d","fa","59","47","f0","ad","d4","a2","af","9c","a4","72","c0"},
-              {"b7","fd","93","26","36","3f","f7","cc","34","a5","e5","f1","71","d8","31","15"},
-	      {"04","c7","23","c3","18","96","05","9a","07","12","80","e2","eb","27","b2","75"},
-              {"09","83","2c","1a","1b","6e","5a","a0","52","3b","d6","b3","29","e3","2f","84"},
-              {"53","d1","00","ed","20","fc","b1","5b","6a","cb","be","39","4a","4c","58","cf"},
-              {"d0","ef","aa","fb","43","4d","33","85","45","f9","02","7f","50","3c","9f","a8"},
-              {"51","a3","40","8f","92","9d","38","f5","bc","b6","da","21","10","ff","f3","d2"},
-              {"cd","0c","13","ec","5f","97","44","17","c4","a7","7e","3d","64","5d","19","73"},
-              {"60","81","4f","dc","22","2a","90","88","46","ee","b8","14","de","5e","0b","db"},
-              {"e0","32","3a","0a","49","06","24","5c","c2","d3","ac","62","91","95","e4","79"},
-              {"e7","c8","37","6d","8d","d5","4e","a9","6c","56","f4","ea","65","7a","ae","08"},
-              {"ba","78","25","2e","1c","a6","b4","c6","e8","dd","74","1f","4b","bd","8b","8a"},
-              {"70","3e","b5","66","48","03","f6","0e","61","35","57","b9","86","c1","1d","9e"},
-              {"e1","f8","98","11","69","d9","8e","94","9b","1e","87","e9","ce","55","28","df"},
-              {"8c","a1","89","0d","bf","e6","42","68","41","99","2d","0f","b0","54","bb","16"}
-      };
-
-
-
- for(int i=0;i<4;i++)
-                
-                   input_state[i]=s_box[string_to_int(input_state[i],0)][string_to_int(input_state[i],1)];
-
-              
-
-
-}
-
-
-
-void shift_rows(std::string input_state[4][4]){
-  shift_array(input_state[1],1);
-  shift_array(input_state[2],2);
-  shift_array(input_state[3],3);
-
-}
-
-
 void mix_columns(std::string input_state[4][4]){
 for(int i=0;i<4;i++){
 mix_single_column(input_state,i);
@@ -263,7 +244,7 @@ mix_single_column(input_state,i);
 }
 
 
-
+/*
 void print(std::string state[4][4]){
 
   for(int i=0;i<4;i++){
@@ -276,8 +257,10 @@ void print(std::string state[4][4]){
 
 }
 
+*/
 
 
+  //next functions we need for key scheduling
 
 void XOR_array(std::string arr1[4],std::string arr2[4], std::string arr3[4]){
 	std::string temp1[4];
@@ -288,7 +271,6 @@ void XOR_array(std::string arr1[4],std::string arr2[4], std::string arr3[4]){
 	temp1[i]=XOR(temp1[i],temp2[i]);
         arr3[i]=hex(temp1[i]);
 
-//	std::cout<<temp1[i]<<std::endl;
 	}
 
 }
@@ -296,7 +278,8 @@ void XOR_array(std::string arr1[4],std::string arr2[4], std::string arr3[4]){
 
 
 
-void print_44(std::string state[4][44]){
+/*
+ void print_44(std::string state[4][44]){
 
   for(int i=0;i<4;i++){
                 for(int j=0;j<44;j++)
@@ -308,7 +291,8 @@ void print_44(std::string state[4][44]){
 
 }
 
-
+*/
+  
 void get_column(std::string m[4][44], int n, std::string a[4]){
 for(int i=0;i<4;i++){
 a[i]=m[i][n];
@@ -344,6 +328,38 @@ m[i][n]=a[i];
 }
 }
 
+void substitute_column(std::string input_state[4]){
+
+
+     std::string s_box[16][16]={
+              {"63","7c","77","7b","f2","6b","6f","c5","30","01","67","2b","fe","d7","ab","76"},
+              {"ca","82","c9","7d","fa","59","47","f0","ad","d4","a2","af","9c","a4","72","c0"},
+              {"b7","fd","93","26","36","3f","f7","cc","34","a5","e5","f1","71","d8","31","15"},
+              {"04","c7","23","c3","18","96","05","9a","07","12","80","e2","eb","27","b2","75"},
+              {"09","83","2c","1a","1b","6e","5a","a0","52","3b","d6","b3","29","e3","2f","84"},
+              {"53","d1","00","ed","20","fc","b1","5b","6a","cb","be","39","4a","4c","58","cf"},
+              {"d0","ef","aa","fb","43","4d","33","85","45","f9","02","7f","50","3c","9f","a8"},
+              {"51","a3","40","8f","92","9d","38","f5","bc","b6","da","21","10","ff","f3","d2"},
+              {"cd","0c","13","ec","5f","97","44","17","c4","a7","7e","3d","64","5d","19","73"},
+              {"60","81","4f","dc","22","2a","90","88","46","ee","b8","14","de","5e","0b","db"},
+              {"e0","32","3a","0a","49","06","24","5c","c2","d3","ac","62","91","95","e4","79"},
+              {"e7","c8","37","6d","8d","d5","4e","a9","6c","56","f4","ea","65","7a","ae","08"},
+              {"ba","78","25","2e","1c","a6","b4","c6","e8","dd","74","1f","4b","bd","8b","8a"},
+              {"70","3e","b5","66","48","03","f6","0e","61","35","57","b9","86","c1","1d","9e"},
+              {"e1","f8","98","11","69","d9","8e","94","9b","1e","87","e9","ce","55","28","df"},
+              {"8c","a1","89","0d","bf","e6","42","68","41","99","2d","0f","b0","54","bb","16"}
+      };
+
+
+
+ for(int i=0;i<4;i++)
+
+                   input_state[i]=s_box[string_to_int(input_state[i],0)][string_to_int(input_state[i],1)];
+
+
+
+
+}
 
 
 void add_round_key(std::string state[4][4],std::string key[4][44], int n){
@@ -364,25 +380,25 @@ int main(){
 
 	std::string input_state[4][4];
 
-std::string inputPl = "";
+std::string input = "";
 std::cout << "Please input the plaintext having length 32, example: 0123456789abcdeffedcba9876543210 " << std::endl;
-std::cin >> inputPl;
+std::cin >> input;
 
 for (int i = 0; i < 4; i++){
 	for(int j = 0; j < 4; j++){
-		input_state[j][i] = std::string() + inputPl.at(i * 8 + j*2) + inputPl.at(i * 8 + j*2 + 1);	
+		input_state[j][i] = std::string() + input.at(i * 8 + j*2) + input.at(i * 8 + j*2 + 1);	
 
 	}
 }
 
 
-       std::string initial_key[4][4];
-
-
+     
 
 std::string inputKey = "";
 std::cout << "Please input the key in the following format: 0f1571c947d9e8590cb7add6af7f6798 " << std::endl;
 std::cin >> inputKey;
+std::string initial_key[4][4];
+
 
 for (int i = 0; i < 4; i++){
 	for(int j = 0; j < 4; j++){
@@ -391,14 +407,13 @@ for (int i = 0; i < 4; i++){
 	}
 }
 
+//key scheduling
+
        std::string key[4][44];
 
         for(int i=0;i<4;i++)
 	  for(int j=0;j<4;j++)
 		  key[i][j]=initial_key[i][j];
-
-
-
 
  std::string rcon[4][10]={
                 {"01","02","04","08","10","20","40","80","1b","36"},
@@ -406,7 +421,9 @@ for (int i = 0; i < 4; i++){
                 {"00","00","00","00","00","00","00","00","00","00"},
                 {"00","00","00","00","00","00","00","00","00","00"}
         };
-//key scheduling
+
+
+
  std::string a[4];
  std::string b[4];
  std::string c[4];
@@ -415,11 +432,10 @@ get_column(key,i-1,a);
 get_column(key,i-4,b);
 if(i%4==0){
 shift_array(a,1);
-substitute_byte(a);
+substitute_column(a);
 get_column_rcon(rcon,(i-4)/4,c);
 XOR_array(a,c,a);
 }
-
 XOR_array(a,b,a);
 set_column(key,i,a);
 
@@ -428,26 +444,7 @@ set_column(key,i,a);
 
 //print_44(key);
 
-
-      std::string s_box[16][16]={
-	      {"63","7c","77","7b","f2","6b","6f","c5","30","01","67","2b","fe","d7","ab","76"},
-	      {"ca","82","c9","7d","fa","59","47","f0","ad","d4","a2","af","9c","a4","72","c0"},
-	      {"b7","fd","93","26","36","3f","f7","cc","34","a5","e5","f1","71","d8","31","15"},
-	      {"04","c7","23","c3","18","96","05","9a","07","12","80","e2","eb","27","b2","75"},
-	      {"09","83","2c","1a","1b","6e","5a","a0","52","3b","d6","b3","29","e3","2f","84"},
-	      {"53","d1","00","ed","20","fc","b1","5b","6a","cb","be","39","4a","4c","58","cf"},
-	      {"d0","ef","aa","fb","43","4d","33","85","45","f9","02","7f","50","3c","9f","a8"},
-	      {"51","a3","40","8f","92","9d","38","f5","bc","b6","da","21","10","ff","f3","d2"},
-	      {"cd","0c","13","ec","5f","97","44","17","c4","a7","7e","3d","64","5d","19","73"},
-	      {"60","81","4f","dc","22","2a","90","88","46","ee","b8","14","de","5e","0b","db"},
-	      {"e0","32","3a","0a","49","06","24","5c","c2","d3","ac","62","91","95","e4","79"},
-	      {"e7","c8","37","6d","8d","d5","4e","a9","6c","56","f4","ea","65","7a","ae","08"},
-	      {"ba","78","25","2e","1c","a6","b4","c6","e8","dd","74","1f","4b","bd","8b","8a"},
-	      {"70","3e","b5","66","48","03","f6","0e","61","35","57","b9","86","c1","1d","9e"},
-	      {"e1","f8","98","11","69","d9","8e","94","9b","1e","87","e9","ce","55","28","df"},
-	      {"8c","a1","89","0d","bf","e6","42","68","41","99","2d","0f","b0","54","bb","16"}
-      };
-
+//starting operations with input state
 
 //print(input_state);
 //std::cout<<std::endl;
@@ -457,7 +454,7 @@ add_round_key(input_state,key,0);
 
 
 for(int i=1;i<10;i++){
-substitute_bytes(input_state,s_box);
+substitute_bytes(input_state);
 shift_rows(input_state);
 mix_columns(input_state);
 add_round_key(input_state,key,4*i);
@@ -465,24 +462,26 @@ add_round_key(input_state,key,4*i);
 std::cout<<std::endl;*/
 }
 
-substitute_bytes(input_state,s_box);
+substitute_bytes(input_state);
 shift_rows(input_state);
 add_round_key(input_state,key,40);
 
 
-//print(input_state);
+/*print(input_state);
 std::cout<<std::endl;
+*/
 
-std::string resultString = "";
+//printing ciphertext
+std::string ciphertext = "";
 
 for (int i = 0; i < 4; i++){
 	for(int j = 0; j < 4; j++){
-		resultString = resultString + input_state[j][i];	
+		ciphertext = ciphertext + input_state[j][i];	
 
 	}
 }
 
-std::cout << "The ciphertext is: " << resultString;
+std::cout << "The ciphertext is: " << ciphertext<<std::endl;
 
 return 0;
 }
